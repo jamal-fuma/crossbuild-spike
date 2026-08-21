@@ -106,7 +106,7 @@ jobs:
 
         # 4. Instant sub-second installation loop from the local archive
         sudo apt-get update
-        cat "${{ github.workspace }}/.github/workflows/pkgs.txt" | xargs sudo apt-get -oDebug::pkgAcquire::Worker=1 install -y --allow-unauthenticated
+        cat "${{ github.workspace }}/.github/workflows/pkgs.txt" | xargs sudo apt-get install -y --allow-unauthenticated
 
     - name: Cache MXE Toolchain
       id: cache-mxe
