@@ -79,8 +79,9 @@ jobs:
 
     - name: Install Monolithic System Tooling (Air-Gapped Local Mirror)
       env:
-        PKGS_LIST: "autoconf automake autopoint bash bison bzip2 ccache dpkg-dev flex g++-14 gettext gperf
-                   intltool libgdk-pixbuf2.0-bin libgdk-pixbuf2.0-dev libtool libtool-bin libxml-parser-perl lzip make p7zip-full python3-mako ruby sed unzip wget wine64 xz-utils"
+        PKGS_LIST: autoconf automake autopoint bash bison bzip2 ccache dpkg-dev flex g++-14 gettext \
+                   gperf intltool libgdk-pixbuf2.0-bin libgdk-pixbuf2.0-dev libtool libtool-bin \
+                   libxml-parser-perl lzip make p7zip-full python3-mako ruby sed unzip wget wine64 xz-utils dpkg-deb
 
       run: |
         if [ "${{ steps.cache-deb.outputs.cache-hit }}" != "true" ] || [ "${{ steps.meta.outputs.force_clean }}" = "true" ]; then
@@ -99,7 +100,7 @@ jobs:
 
           ( cd debian_packages  \
               && apt-get -o Debug::NoLocking=1 -o "APT::Sandbox::User=${USER}" download \
-                   ${PKGS_LIST}
+                   ${PKGS_LIST} \
                    );
 
           ( cd debian_packages  \
