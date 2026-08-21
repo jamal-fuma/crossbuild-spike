@@ -23,6 +23,17 @@ jobs:
       with:
         fetch-depth: 0
 
+
+    - name: Bootstrap Project Architecture via Autoscaffold
+      run: |
+        if [ ! -f configure.ac ]; then
+          git clone https://github.com/jamal-fuma/autoscaffold.git /home/runner/autoscaffold
+          cd /home/runner/autoscaffold
+          ./configure.sh
+          cd /home/runner/autoscaffold/output
+          cp -rn . "${{ github.workspace }}/" || true
+        fi
+
     - name: Evaluate Metadata & Flags
       id: meta
       run: |
