@@ -85,12 +85,12 @@ jobs:
         # 2. Extract or Download package binary layout
         if [ "${{ steps.cache-deb.outputs.cache-hit }}" != "true" ] || [ "${{ steps.meta.outputs.force_clean }}" = "true" ]; then
           echo "Cache miss or full-build triggered. Downloading fresh packages..."
-          rm -rf debian_packages Packages.gz
-          mkdir debian_packages
+          sudo rm -rf debian_packages /opt/debian
+          sudo mkdir /opt/debian
           sudo ln -s "${{ github.workspace }}/debian_packages" /opt/debian
           sudo chown -R $USER:$USER /opt/debian "${{ github.workspace }}/debian_packages"
           cd debian_packages
-          apt-get -o Debug::NoLocking=1 -o APT::Sandbox::User=$USER download autoconf automake autopoint bash bison bzip2 ccache dpkg-dev flex g++-14 gettext gperf intltool libgdk-pixbuf2.0-bin libgdk-pixbuf2.0-dev libtool libtool-bin libxml-parser-perl lzip make p7zip-full python3-mako ruby sed unzip wget wine64 xz-utils
+          apt-get -o Debug::NoLocking=1 -o "APT::Sandbox::User=${USER}" download autoconf automake autopoint bash bison bzip2 ccache dpkg-dev flex g++-14 gettext gperf intltool libgdk-pixbuf2.0-bin libgdk-pixbuf2.0-dev libtool libtool-bin libxml-parser-perl lzip make p7zip-full python3-mako ruby sed unzip wget wine64 xz-utils
           cd ..
         fi
         cd debian_packages
