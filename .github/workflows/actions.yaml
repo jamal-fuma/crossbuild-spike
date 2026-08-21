@@ -77,7 +77,7 @@ jobs:
         key: deb-pkgs-${{ steps.meta.outputs.key_modifier }}
         restore-keys: deb-pkgs-
 
-    - name: Install Monolithic System Tooling (Air-Gapped Local Mirror)
+    - name: "Install Monolithic System Tooling (Air-Gapped Local Mirror)"
       run: |
         if [ "${{ steps.cache-deb.outputs.cache-hit }}" != "true" ] || [ "${{ steps.meta.outputs.force_clean }}" = "true" ]; then
           echo "Cache miss or full-build triggered. Downloading fresh packages..."
@@ -85,25 +85,21 @@ jobs:
           rm -rf debian_packages;
           mkdir debian_packages
           sudo chown -R $USER:$USER debian_packages
-
           sudo apt-get update && sudo apt-get install -y dpkg-dev
 
           ( cd debian_packages  \
                 && dpkg-scanpackages . /dev/null \
                   | gzip -9c \
                 > Packages.gz; )
-
           ( cd debian_packages  \
               cat "${{ github.workspace }}/.github/workflows/pkgs.txt" \
               | xargs apt-get -o Debug::NoLocking=1 -o "APT::Sandbox::User=${USER}" download \
                    );
-
           ( cd debian_packages  \
               && dpkg-scanpackages . /dev/null \
               | gzip -9c \
               > Packages.gz; );
-
-       fi
+        fi
 
         # 3. Mount fully offline sandbox and override Apt Sources Engine
         ABS_CACHE_DIR="${{ github.workspace }}/debian_packages"
