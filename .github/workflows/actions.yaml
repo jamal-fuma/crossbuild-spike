@@ -51,11 +51,10 @@ jobs:
         MIDNIGHT_TIMESTAMP=$(( CURRENT_TIMESTAMP - (CURRENT_TIMESTAMP % 86400) ))
         WEEK_START_EPOCH=$(( MIDNIGHT_TIMESTAMP - SECONDS_TO_SUBTRACT ))
         echo "week_epoch=${WEEK_START_EPOCH}" >> $GITHUB_OUTPUT
-
-        if [ "${{ env.FORCE_CLEAN }}" = "true" ]; then
-          echo "key_modifier=${WEEK_START_EPOCH}-clean-${{ github.sha }}" >> $GITHUB_OUTPUT
+        if [ "${{ steps.meta.outputs.force_clean }}" = "true" ]; then
+          echo "key_modifier=${{ steps.meta.outputs.week_epoch }}-clean-${{ github.sha }}" >> $GITHUB_OUTPUT
         else
-          echo "key_modifier=${WEEK_START_EPOCH}" >> $GITHUB_OUTPUT
+          echo "key_modifier=${{ steps.meta.outputs.week_epoch }}" >> $GITHUB_OUTPUT
         fi
 
     - name: Calculate Release Suffix
