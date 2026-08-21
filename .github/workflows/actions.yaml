@@ -78,9 +78,11 @@ jobs:
         restore-keys: deb-pkgs-
 
     - name: Install Monolithic System Tooling (Air-Gapped Local Mirror)
-      run: |
-        PKGS_LIST="autoconf automake autopoint bash bison bzip2 ccache dpkg-dev flex g++-14 gettext gperf intltool libgdk-pixbuf2.0-bin libgdk-pixbuf2.0-dev libtool libtool-bin libxml-parser-perl lzip make p7zip-full python3-mako ruby sed unzip wget wine64 xz-utils"
+      env:
+        PKGS_LIST: "autoconf automake autopoint bash bison bzip2 ccache dpkg-dev flex g++-14 gettext gperf
+                   intltool libgdk-pixbuf2.0-bin libgdk-pixbuf2.0-dev libtool libtool-bin libxml-parser-perl lzip make p7zip-full python3-mako ruby sed unzip wget wine64 xz-utils"
 
+      run: |
         if [ "${{ steps.cache-deb.outputs.cache-hit }}" != "true" ] || [ "${{ steps.meta.outputs.force_clean }}" = "true" ]; then
           echo "Cache miss or full-build triggered. Downloading fresh packages..."
 
