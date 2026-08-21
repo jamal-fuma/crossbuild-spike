@@ -79,22 +79,36 @@ jobs:
 
     - name: Install Monolithic System Tooling (Air-Gapped Local Mirror)
       run: |
-        # 1. Staging local repo framework requirements
-        sudo apt-get update && sudo apt-get install -y dpkg-dev
+        PKGS_LIST=\
+                   autoconf automake autopoint bash bison bzip2 ccache \
+                   dpkg-dev flex g++-14 gettext gperf intltool libgdk-pixbuf2.0-bin \
+                   libgdk-pixbuf2.0-dev libtool libtool-bin libxml-parser-perl lzip make p7zip-full python3-mako ruby sed unzip wget wine64 xz-utils
 
-        # 2. Extract or Download package binary layout
         if [ "${{ steps.cache-deb.outputs.cache-hit }}" != "true" ] || [ "${{ steps.meta.outputs.force_clean }}" = "true" ]; then
           echo "Cache miss or full-build triggered. Downloading fresh packages..."
-          sudo rm -rf debian_packages
-          sudo mkdir debian_packages
-          sudo chown -R $USER:$USER "${{ github.workspace }}/debian_packages"
-          cd debian_packages
-          apt-get -o Debug::NoLocking=1 -o "APT::Sandbox::User=${USER}" download autoconf automake autopoint bash bison bzip2 ccache dpkg-dev flex g++-14 gettext gperf intltool libgdk-pixbuf2.0-bin libgdk-pixbuf2.0-dev libtool libtool-bin libxml-parser-perl lzip make p7zip-full python3-mako ruby sed unzip wget wine64 xz-utils
-          cd ..
-        fi
-        cd debian_packages
-        dpkg-scanpackages . /dev/null | gzip -9c > Packages.gz
-        cd ..
+
+          rm -rf debian_packages;
+          mkdir debian_packages
+          sudo chown -R $USER:$USER debian_packages
+
+          sudo apt-get update && sudo apt-get install -y dpkg-dev
+
+          ( cd debian_packages  \
+                && dpkg-scanpackages . /dev/null \
+                  | gzip -9c \
+                > Packages.gz; )
+
+          ( cd debian_packages  \
+              && apt-get -o Debug::NoLocking=1 -o "APT::Sandbox::User=${USER}" download \
+                   ${PKGS_LIST}
+                   );
+
+          ( cd debian_packages  \
+              && dpkg-scanpackages . /dev/null \
+              | gzip -9c \
+              > Packages.gz; );
+
+       fi
 
         # 3. Mount fully offline sandbox and override Apt Sources Engine
         ABS_CACHE_DIR="${{ github.workspace }}/debian_packages"
@@ -104,26 +118,7 @@ jobs:
         # 4. Instant sub-second installation loop from the local archive
         sudo apt-get update
         sudo apt-get install -y --allow-unauthenticated \
-          autoconf automake libtool make ccache dpkg-dev g++-14 p7zip-full wine64
-          autopoint \
-          bash \
-          bison \
-          bzip2 \
-          flex \
-          gettext \
-          gperf \
-          intltool \
-          libgdk-pixbuf2.0-bin \
-          libgdk-pixbuf2.0-dev \
-          libtool-bin \
-          libxml-parser-perl \
-          lzip \
-          python3-mako \
-          ruby \
-          sed \
-          unzip \
-          wget \
-          xz-utils
+           ${PKGS_LIST} dpkg-deb
 
     - name: Cache MXE Toolchain
       id: cache-mxe
