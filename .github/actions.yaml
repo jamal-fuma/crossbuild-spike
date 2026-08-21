@@ -33,14 +33,14 @@ jobs:
         else
           echo "force_clean=false" >> $GITHUB_OUTPUT
         fi
-        
+
         CURRENT_DAY=$(date -u +%u)
         SECONDS_TO_SUBTRACT=$(( (CURRENT_DAY - 1) * 86400 ))
         CURRENT_TIMESTAMP=$(date -u +%s)
         MIDNIGHT_TIMESTAMP=$(( CURRENT_TIMESTAMP - (CURRENT_TIMESTAMP % 86400) ))
         WEEK_START_EPOCH=$(( MIDNIGHT_TIMESTAMP - SECONDS_TO_SUBTRACT ))
         echo "week_epoch=${WEEK_START_EPOCH}" >> $GITHUB_OUTPUT
-        
+
         if [ "${{ env.FORCE_CLEAN }}" = "true" ]; then
           echo "key_modifier=${WEEK_START_EPOCH}-clean-${{ github.sha }}" >> $GITHUB_OUTPUT
         else
@@ -120,21 +120,21 @@ jobs:
         export CXXFLAGS="-std=c++23 -O3"
         export CCACHE_BASEDIR="${{ github.workspace }}"
         CONF_CACHE="${{ github.workspace }}/config.cache-linux"
-        
+
         if [ "${{ steps.meta.outputs.force_clean }}" = "true" ]; then
           ./configure --prefix=/usr
         else
           ./configure --prefix=/usr --cache-file=$CONF_CACHE
         fi
-        
+
         PROJ_NAME=$(awk -F= '/^PACKAGE_TARNAME =/{print $2}' Makefile | tr -d '[:space:]')
         if [ -z "$PROJ_NAME" ]; then PROJ_NAME=$(awk -F= '/^PACKAGE =/{print $2}' Makefile | tr -d '[:space:]'); fi
         echo "project_name=${PROJ_NAME}" >> $GITHUB_OUTPUT
-        
+
         make -j$(nproc)
         make check
         make distcheck DISTCHECK_CONFIGURE_FLAGS="CC='$CC' CXX='$CXX' CXXFLAGS='$CXXFLAGS' --cache-file=$CONF_CACHE --prefix=/usr"
-        
+
         DEB_VER=$(echo "${{ steps.version.outputs.release_version }}" | sed 's/^v//')
         PKG_DIR="${{ github.workspace }}/debian-package"
         mkdir -p "${PKG_DIR}/DEBIAN"
@@ -163,18 +163,18 @@ jobs:
         export CCACHE_BASEDIR="${{ github.workspace }}"
         CONF_CACHE="${{ github.workspace }}/config.cache-windows"
         PROJ_NAME="${{ steps.build-linux.outputs.project_name }}"
-        
+
         # Configure targeting Windows via MXE, aligning installation prefix inside the debian layout space
         if [ "${{ steps.meta.outputs.force_clean }}" = "true" ]; then
           ./configure --host=x86_64-w64-mingw32.static --prefix="/usr/share/mxe/${PROJ_NAME}"
         else
           ./configure --host=x86_64-w64-mingw32.static --prefix="/usr/share/mxe/${PROJ_NAME}" --cache-file=$CONF_CACHE
         fi
-        
+
         make -j$(nproc)
         wine64 tests/test_suite.exe
         make distcheck DISTCHECK_CONFIGURE_FLAGS="--host=x86_64-w64-mingw32.static CC='$CC' CXX='$CXX' CXXFLAGS='$CXXFLAGS' LOG_COMPILER='wine64' --cache-file=$CONF_CACHE --prefix=/usr/share/mxe/${PROJ_NAME}"
-        
+
         # Package Windows output identically into an architecture-all MXE Debian Package
         DEB_VER=$(echo "${{ steps.version.outputs.release_version }}" | sed 's/^v//')
         PKG_DIR_WIN="${{ github.workspace }}/debian-package-mxe"
