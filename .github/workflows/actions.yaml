@@ -18,7 +18,7 @@ jobs:
 
     steps:
     - name: Checkout Repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         fetch-depth: 0
 
@@ -71,7 +71,7 @@ jobs:
 
     - name: Cache Air-Gapped Debian Packages
       id: cache-deb
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: .apt_cache_store
         key: deb-pkgs-${{ steps.meta.outputs.key_modifier }}
@@ -123,7 +123,7 @@ jobs:
 
     - name: Cache MXE Toolchain
       id: cache-mxe
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: mxe-toolchain
         key: mxe-gcc14-x86_64-w64-mingw32-${{ steps.meta.outputs.key_modifier }}
@@ -143,7 +143,7 @@ jobs:
         fi
 
     - name: Cache Linux Environment (Autotools & ccache)
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: |
           **/config.cache-linux
@@ -152,7 +152,7 @@ jobs:
         restore-keys: build-cache-linux-${{ steps.meta.outputs.key_modifier }}-
 
     - name: Cache Windows Environment (Autotools & ccache)
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: |
           **/config.cache-windows
@@ -257,7 +257,7 @@ jobs:
         cp -f *.tar.gz *.tar.xz *.deb payload/ || true
 
     - name: Upload Workspace Artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: final-release-packages
         path: payload/
