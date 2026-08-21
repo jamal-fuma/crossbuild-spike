@@ -79,7 +79,7 @@ jobs:
         sudo rm -rf /opt/mxe
         sudo mkdir -p /opt/mxe
         sudo chown -R $USER:$USER /opt/mxe
-        git clone https://github.com /opt/mxe
+        git clone https://github.com/mxe/mxe.git /opt/mxe
         cd /opt/mxe
         make JOBS=$(nproc) MXE_TARGETS='x86_64-w64-mingw32.static' gcc
 
