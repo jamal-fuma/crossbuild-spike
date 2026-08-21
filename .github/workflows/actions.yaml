@@ -87,7 +87,7 @@ jobs:
           echo "Cache miss or full-build triggered. Downloading fresh packages..."
           rm -rf debian_packages
           mkdir debian_packages
-          sudo ln -s "${{ github.workspace }}/debian_packages" /opt/debian'
+          sudo ln -s "${{ github.workspace }}/debian_packages" /opt/debian
           sudo chown -R $USER:$USER /opt/debian "${{ github.workspace }}/debian_packages"
           cd debian_packages
           apt-get download autoconf automake autopoint bash bison bzip2 ccache dpkg-dev flex g++-14 gettext gperf intltool libgdk-pixbuf2.0-bin libgdk-pixbuf2.0-dev libtool libtool-bin libxml-parser-perl lzip make p7zip-full python3-mako ruby sed unzip wget wine64 xz-utils
