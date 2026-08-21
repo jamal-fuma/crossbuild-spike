@@ -238,8 +238,8 @@ jobs:
     - name: Push Git Release Tag
       if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
       run: |
-        git config user.name "github-actions[bot]"
-        git config user.email "github-actions[bot]@://github.com"
+        git config --global user.name "${{ github.event.head_commit.author.name || 'github-actions[bot]' }}"
+        git config --global user.email "${{ github.event.head_commit.author.email || 'github-actions[bot]@://github.com' }}"
         git tag -a "${{ steps.version.outputs.release_version }}" -m "Weekly Release"
         git push origin "${{ steps.version.outputs.release_version }}"
 
