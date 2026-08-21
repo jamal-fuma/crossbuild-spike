@@ -78,11 +78,6 @@ jobs:
         restore-keys: deb-pkgs-
 
     - name: Install Monolithic System Tooling (Air-Gapped Local Mirror)
-      env:
-        PKGS_LIST: autoconf automake autopoint bash bison bzip2 ccache dpkg-dev flex g++-14 gettext \
-                   gperf intltool libgdk-pixbuf2.0-bin libgdk-pixbuf2.0-dev libtool libtool-bin \
-                   libxml-parser-perl lzip make p7zip-full python3-mako ruby sed unzip wget wine64 xz-utils dpkg-deb
-
       run: |
         if [ "${{ steps.cache-deb.outputs.cache-hit }}" != "true" ] || [ "${{ steps.meta.outputs.force_clean }}" = "true" ]; then
           echo "Cache miss or full-build triggered. Downloading fresh packages..."
@@ -99,8 +94,8 @@ jobs:
                 > Packages.gz; )
 
           ( cd debian_packages  \
-              && apt-get -o Debug::NoLocking=1 -o "APT::Sandbox::User=${USER}" download \
-                   ${PKGS_LIST} \
+              cat "${{ github.workspace }}/.github/workflows/pkgs.txt" \
+              | xargs apt-get -o Debug::NoLocking=1 -o "APT::Sandbox::User=${USER}" download \
                    );
 
           ( cd debian_packages  \
@@ -117,8 +112,7 @@ jobs:
 
         # 4. Instant sub-second installation loop from the local archive
         sudo apt-get update
-        sudo apt-get install -y --allow-unauthenticated \
-           ${PKGS_LIST} dpkg-deb
+        cat "${{ github.workspace }}/.github/workflows/pkgs.txt" | xargs sudo apt-get install -y --allow-unauthenticated
 
     - name: Cache MXE Toolchain
       id: cache-mxe
