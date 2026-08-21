@@ -29,6 +29,8 @@ jobs:
         if [ ! -f configure.ac ]; then
           git clone https://github.com/jamal-fuma/autoscaffold.git /home/runner/autoscaffold
           cd /home/runner/autoscaffold
+          git config --global user.name "${{ github.event.head_commit.author.name || 'github-actions[bot]' }}"
+          git config --global user.email "${{ github.event.head_commit.author.email || 'github-actions[bot]@://github.com' }}"
           ./configure.sh "${{ github.workspace }}/"
         fi
 
