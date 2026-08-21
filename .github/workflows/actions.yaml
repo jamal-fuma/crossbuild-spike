@@ -90,7 +90,7 @@ jobs:
           sudo ln -s "${{ github.workspace }}/debian_packages" /opt/debian
           sudo chown -R $USER:$USER /opt/debian "${{ github.workspace }}/debian_packages"
           cd debian_packages
-          apt-get download autoconf automake autopoint bash bison bzip2 ccache dpkg-dev flex g++-14 gettext gperf intltool libgdk-pixbuf2.0-bin libgdk-pixbuf2.0-dev libtool libtool-bin libxml-parser-perl lzip make p7zip-full python3-mako ruby sed unzip wget wine64 xz-utils
+          apt-get -o Debug::NoLocking=1 -o APT::Sandbox::User=$USER download autoconf automake autopoint bash bison bzip2 ccache dpkg-dev flex g++-14 gettext gperf intltool libgdk-pixbuf2.0-bin libgdk-pixbuf2.0-dev libtool libtool-bin libxml-parser-perl lzip make p7zip-full python3-mako ruby sed unzip wget wine64 xz-utils
           dpkg-scanpackages . /dev/null | gzip -9c > ../Packages.gz
           mv ../Packages.gz ./
           cd ..
