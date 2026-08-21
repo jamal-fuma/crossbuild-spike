@@ -100,19 +100,22 @@ jobs:
       id: cache-mxe
       uses: actions/cache@v4
       with:
-        path: /opt/mxe
+        path: mxe-toolchain
         key: mxe-gcc14-x86_64-w64-mingw32-${{ steps.meta.outputs.key_modifier }}
         restore-keys: mxe-gcc14-x86_64-w64-mingw32-
 
     - name: Bootstrap MXE Toolchain
       if: steps.cache-mxe.outputs.cache-hit != 'true' || steps.meta.outputs.force_clean == 'true'
       run: |
-        sudo rm -rf /opt/mxe
-        sudo mkdir -p /opt/mxe
-        sudo chown -R $USER:$USER /opt/mxe
-        git clone https://github.com/mxe/mxe.git /opt/mxe
-        cd /opt/mxe
-        make JOBS=$(nproc) MXE_TARGETS='x86_64-w64-mingw32.static' gcc
+        if [ "${{ steps.cache-mxe.outputs.cache-hit }}" != "true" ] || [ "${{ steps.meta.outputs.force_clean }}" = "true" ]; then\
+          rm -rf mxe-toolchain
+          git clone https://github.com/mxe/mxe.git mxe-toolchain
+          cd mxe-toolchain
+          sudo ln -s "${{ github.workspace }}/mxe-toolchain" /opt/mxe'
+          sudo chown -R $USER:$USER /opt/mxe "${{ github.workspace }}/mxe-toolchain"
+          make JOBS=$(nproc) MXE_TARGETS='x86_64-w64-mingw32.static' gcc
+          cd ..
+        fi
 
     - name: Cache Linux Environment (Autotools & ccache)
       uses: actions/cache@v4
