@@ -64,6 +64,27 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y autoconf automake libtool make ccache dpkg-dev g++-14 p7zip-full wine64
+        sudo apt-get install -y \
+          autopoint \
+          bash \
+          bison \
+          bzip2 \
+          flex \
+          gettext \
+          gperf \
+          intltool \
+          libgdk-pixbuf2.0-bin \
+          libgdk-pixbuf2.0-dev \
+          libtool-bin \
+          libxml-parser-perl \
+          lzip \
+          python3-mako \
+          ruby \
+          sed \
+          unzip \
+          wget \
+          xz-utils
+
 
     - name: Cache MXE Toolchain
       id: cache-mxe
