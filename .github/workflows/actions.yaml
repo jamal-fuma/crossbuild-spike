@@ -92,7 +92,7 @@ jobs:
                   | gzip -9c \
                 > Packages.gz; )
           ( cd debian_packages  \
-              cat "${{ github.workspace }}/.github/workflows/pkgs.txt" \
+              && cat "${{ github.workspace }}/.github/workflows/pkgs.txt" \
               | xargs apt-get -o Debug::NoLocking=1 -o "APT::Sandbox::User=${USER}" download \
                    );
           ( cd debian_packages  \
