@@ -5,7 +5,6 @@ bash
 bison
 bzip2
 ccache
-dpkg-deb
 dpkg-dev
 flex
 g++-14
