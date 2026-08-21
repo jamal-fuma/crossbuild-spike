@@ -55,7 +55,7 @@ jobs:
         if [ -z "$MATCHING_TAGS" ]; then
           RC_NUMBER=1
         else
-          LAST_RC=$(echo "$MATCHING_TAGS" | sed "s/^v${{{ steps.meta.outputs.week_epoch }}}-rc//" | sort -n | tail -n 1)
+          LAST_RC=$(echo "$MATCHING_TAGS" | sed "s/^v${{ steps.meta.outputs.week_epoch }}-rc//" | sort -n | tail -n 1)
           RC_NUMBER=$(( LAST_RC + 1 ))
         fi
         echo "release_version=v${{ steps.meta.outputs.week_epoch }}-rc${RC_NUMBER}" >> $GITHUB_OUTPUT
